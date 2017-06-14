@@ -13,7 +13,7 @@ export default class itemsApi {
           name: item.name,
           completed: false,
         });
-      }, 1000);
+      }, 100);
     });
     // return fetch('/items', {
     //   method: 'POST',
@@ -33,7 +33,7 @@ export default class itemsApi {
       console.log(item);
       setTimeout(() => {
         resolve();
-      }, 1000);
+      }, 100);
     });
     // return fetch('/items', {
     //   method: 'POST',
@@ -57,7 +57,7 @@ export default class itemsApi {
           name: item.name,
           completed: item.completed,
         });
-      }, 1000);
+      }, 100);
     });
     // return fetch('/items', {
     //   method: 'POST',
