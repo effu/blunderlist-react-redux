@@ -1,3 +1,5 @@
+/* reducers/items.js */
+
 import * as actions from '../actions';
 
 const findIndex = (array, id) => {

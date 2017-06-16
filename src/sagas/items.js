@@ -1,3 +1,5 @@
+/* sagas/items.js */
+
 import { call, put } from 'redux-saga/effects';
 import itemsApi from '../api/items';
 import * as actions from '../actions';
