@@ -1,0 +1,14 @@
+
+/* public/styles.css */
+body {
+  margin: 0;
+}
+.home-view {
+  display: flex;
+}
+.blunder-list {
+  min-width: calc(100vw - 258px);
+}
+.blunder-left-drawer {
+  min-width: 258px;
+}
