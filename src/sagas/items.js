@@ -16,6 +16,18 @@ export function* createItem(action) { // eslint-disable-line import/prefer-defau
   }
 }
 
+export function* deleteItem(action) {
+  try {
+    yield call(itemsApi.deleteItemPromise, action.item);
+    yield put({
+      type: actions.ITEM_DELETE_RES,
+      item: action.item,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export function* updateItem(action) { // eslint-disable-line import/prefer-default-export
   try {
     const item = yield call(itemsApi.updateItemPromise, action.item);

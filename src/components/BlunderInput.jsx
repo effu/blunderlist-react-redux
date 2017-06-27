@@ -10,14 +10,25 @@ const propTypes = {
   type: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]),
 };
 
 const defaultProps = {
+  children: <div />,
   item: { name: '' },
   type: '',
 };
 
-const BlunderInput = ({ item, onChange, onClick, type }) => (
+const BlunderInput = ({
+  children,
+  item,
+  onChange,
+  onClick,
+  type,
+}) => (
   <div className={`item-${type}`}>
     <input
       placeholder={`${type} a blunder...`}
@@ -29,6 +40,7 @@ const BlunderInput = ({ item, onChange, onClick, type }) => (
     >
       {`${type} Blunder`}
     </button>
+    {children}
   </div>
 );
 

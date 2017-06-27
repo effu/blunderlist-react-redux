@@ -3,14 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-    }),
-  ),
-  onClick: PropTypes.func.isRequired,
-  onChange: PropTypes.func.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
 };
 
 const defaultProps = {
@@ -18,29 +14,11 @@ const defaultProps = {
 };
 
 const BlunderList = (props) => {
-  const { items, onClick, onChange } = props;
+  const { children } = props;
   return (
     <div className="item-list">
       <ul>
-        {items.map((item) => {
-          const {
-            name,
-            id,
-            completed,
-          } = item;
-          if (completed) return null;
-          return (
-            <li key={id}>
-              <input
-                type="checkbox"
-                onChange={() => onChange(item)}
-              />
-              <span onClick={() => onClick(item)}>
-                {name}
-              </span>
-            </li>
-          );
-        })}
+        {children}
       </ul>
     </div>
   );
