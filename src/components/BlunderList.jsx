@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import {
   routerShape,
   withRouter,
-} from 'react-router-redux';
+} from 'react-router';
 
 
 import FlatButton from 'material-ui/FlatButton';
