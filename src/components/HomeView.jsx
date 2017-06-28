@@ -19,6 +19,7 @@ class HomeView extends React.Component {
         <div>
           <AppBar
             title="Blunder List"
+            onLeftIconButtonTouchTap={() => console.log('left button touched')}
           />
         </div>
       </MuiThemeProvider>
