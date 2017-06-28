@@ -2,6 +2,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import {
+  routerShape,
+  withRouter,
+} from 'react-router-redux';
+
 
 import FlatButton from 'material-ui/FlatButton';
 import { List, ListItem } from 'material-ui/List';
@@ -11,7 +17,8 @@ class BlunderList extends React.Component {
 
   updateParams = (randomString) => {
     const path = `/lists/${randomString}`;
-    console.log(path);
+    // takes whatever is in your request uri and replaces it
+    this.props.router.replace(path);
     this.props.showItemDetail();
   }
 
@@ -30,7 +37,11 @@ class BlunderList extends React.Component {
 }
 
 BlunderList.propTypes = {
+  router: routerShape.isRequired,
   showItemDetail: PropTypes.func.isRequired,
 };
 
-export default BlunderList;
+const mapStateToProps = state => ({ items: state.items });
+
+// connects the router to components
+export default connect(mapStateToProps)(withRouter(BlunderList));
