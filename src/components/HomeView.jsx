@@ -37,7 +37,7 @@ class HomeView extends React.Component {
               </Drawer>
             </div>
             <BlunderList
-              showItemDetail={() => console.log('BlunderListj component')}
+              showItemDetail={() => console.log('BlunderList component')}
             />
           </div>
         </div>
