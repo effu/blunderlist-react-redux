@@ -5,6 +5,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import BlunderLeftDrawerContent from './BlunderLeftDrawerContent';
+import BlunderList from './BlunderList';
 
 import { THEME } from '../utils';
 
@@ -32,11 +33,12 @@ class HomeView extends React.Component {
               >
                 <BlunderLeftDrawerContent
                   closeDrawer={() => this.setState({ showLeftDrawer: false })}
-                >
-
-                </BlunderLeftDrawerContent>
+                />
               </Drawer>
             </div>
+            <BlunderList
+              showItemDetail={() => console.log('BlunderListj component')}
+            />
           </div>
         </div>
       </MuiThemeProvider>
