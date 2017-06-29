@@ -16,6 +16,7 @@ class BlunderLeftDrawerContent extends Component {
             onTouchTap={() => this.props.closeDrawer()}
             rightIcon={<MenuSVG />}
           />
+          
         </List>
       </div>
     );
