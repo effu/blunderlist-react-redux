@@ -20,6 +20,10 @@ class HomeView extends React.Component {
   }
   state = {}
 
+  closeItemDetail = () => {
+    this.setState({ showRightDrawer: false });
+  }
+
   render() {
     return (
       <MuiThemeProvider muiTheme={THEME}>
@@ -35,11 +39,13 @@ class HomeView extends React.Component {
               >
                 <BlunderLeftDrawerContent
                   closeDrawer={() => this.setState({ showLeftDrawer: false })}
+                  closeItemDetail={this.closeItemDetail}
                 />
               </Drawer>
             </div>
             <BlunderList
               showItemDetail={() => this.setState({ showRightDrawer: true })}
+              closeItemDetail={this.closeItemDetail}
             />
           </div>
           <div className="blunder-right-drawer">
@@ -48,7 +54,7 @@ class HomeView extends React.Component {
               openSecondary
             >
               <BlunderRightDrawerContent
-                closeDrawer={() => this.setState({ showRightDrawer: false })}
+                closeItemDetail={this.closeItemDetail}
               />
             </Drawer>
           </div>
