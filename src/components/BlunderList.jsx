@@ -1,21 +1,24 @@
-/* componenets/BlunderList.jsx */
+
+/* BlunderList.jsx */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { isEqual } from 'lodash';
 import {
   routerShape,
   withRouter,
 } from 'react-router';
-
-
-import FlatButton from 'material-ui/FlatButton';
+import {
+  List,
+  ListItem,
+} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
+import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
-import CheckboxSVG from 'material-ui/svg-icons/toggle/check-box';
 import AddSVG from 'material-ui/svg-icons/content/add';
-import { List, ListItem } from 'material-ui/List';
+import CheckboxSVG from 'material-ui/svg-icons/toggle/check-box';
 
 import {
   ITEM_CREATE_REQ,
@@ -47,17 +50,25 @@ class BlunderList extends React.Component {
         items,
         params,
       } = nextProps;
-
-      // let filteredItems;
-      // if (this.props.params.groupId == 'theInbox') {
-      //   filteredItems = items.filter(item => !item.groupId);
-      // } else {
-      //   filteredItems = items.filter(item => item.groupId === item.groupId);
-      // }
-
-      const filteredItems = items.filter(item => params.groupId === item.groupId);
+      let filteredItems;
+      if (this.props.params.groupId === 'theInbox') {
+        filteredItems = items.filter(item => !item.groupId);
+      } else {
+        filteredItems = items.filter(item => params.groupId === item.groupId);
+      }
       this.setState({ filteredItems: filteredItems || [] });
     }
+  }
+
+  onItemCreate = (spongeBob) => {
+    this.props.dispatch({
+      type: ITEM_CREATE_REQ,
+      item: {
+        ...spongeBob,
+        groupId: this.props.router.params.groupId,
+      },
+    });
+    this.setState({ myItem: newItem });
   }
 
   onItemUpdate = (editItem) => {
@@ -67,31 +78,18 @@ class BlunderList extends React.Component {
     });
   }
 
-
-  onItemNameChange = (event) => {
+  onItemNameChange = (e) => {
     this.setState({
       myItem: {
         ...this.state.myItem,
-        name: event.target.value,
+        name: e.target.value,
       },
     });
     this.props.closeItemDetail();
   }
 
-  onItemCreate = (addItem) => {
-    this.props.dispatch({
-      type: ITEM_CREATE_REQ,
-      item: {
-        ...addItem,
-        groupId: this.props.router.params.groupId,
-      },
-    });
-    this.setState({ item: newItem });
-  }
-
   updateParams = (item) => {
-    const path = `/lists/${item.groupId}`;
-    // takes whatever is in your request uri and replaces it
+    const path = `/lists/${item.groupId}/items/${item.id}`;
     this.props.router.replace(path);
     this.props.showItemDetail();
   }
@@ -110,22 +108,19 @@ class BlunderList extends React.Component {
                   onTouchTap={() => {
                     this.onItemUpdate({
                       ...item,
-                      completed: !item.Completed,
+                      completed: !item.completed,
                     });
-                  }
-                }
+                  }}
                 >
                   <CheckboxSVG />
                 </IconButton>
+                <FlatButton
+                  label={<del>Item Name</del>}
+                  onTouchTap={() => this.updateParams(item)}
+                />
               </ListItem>
             );
           })}
-          <ListItem>
-            <FlatButton
-              label={<del>Item Name</del>}
-              onTouchTap={() => this.updateParams('item')}
-            />
-          </ListItem>
         </List>
       );
     }
@@ -133,7 +128,8 @@ class BlunderList extends React.Component {
   }
 
   render() {
-    // const showCompleted
+    const { showCompleted } = this.state;
+
     return (
       <div className="blunder-list">
         <List>
@@ -169,16 +165,20 @@ class BlunderList extends React.Component {
                   }}
                 />
                 <FlatButton
-                  label={<del>Item Name</del>}
+                  label={item.name}
                   onTouchTap={() => this.updateParams(item)}
                 />
               </ListItem>
             );
           })}
+          <ListItem
+            primaryText="Show Completed Blunders"
+            onTouchTap={() => this.setState({ showCompleted: !showCompleted })}
+          />
         </List>
 
-
         {this.renderCompleted()}
+
       </div>
     );
   }
@@ -197,5 +197,4 @@ BlunderList.propTypes = {
 
 const mapStateToProps = state => ({ items: state.items });
 
-// connects the router to components
 export default connect(mapStateToProps)(withRouter(BlunderList));
