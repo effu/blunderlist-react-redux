@@ -17,15 +17,81 @@ import FileFolderSVG from 'material-ui/svg-icons/file/folder';
 import CreateNewFolderSVG from 'material-ui/svg-icons/file/create-new-folder';
 import ModeEditSVG from 'material-ui/svg-icons/content/create';
 import MenuSVG from 'material-ui/svg-icons/navigation/menu';
+import {
+  GROUP_CREATE_REQ,
+  GROUP_DELETE_REQ,
+  GROUP_UPDATE_REQ,
+} from '../actions';
+
+
+const clearDialogs = {
+  showCreateDialog: false,
+  showDeleteDialog: false,
+  showEditDialog: false,
+};
 
 class BlunderLeftDrawerContent extends Component {
   state = {
-    showCreateDialog: false,
+    ...clearDialogs,
     editList: {
       name: '',
     },
   }
 
+  componentWillMount() {
+    const { pathname } = this.props.location;
+
+    if ((pathname === '/') || (pathname === '/lists') || (pathname === '/lists/')) {
+      this.onRedirect('theInbox');
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.groups.length !== nextProps.groups.length) {
+      const newGroup = nextProps.groups[nextProps.groups.length - 1];
+      this.onRedirect(newGroup.id);
+      // dialog will not close until the groups change
+      this.setState({
+        ...clearDialogs,
+        editList: { name: '' },
+      });
+    }
+  }
+
+  onGroupCreate = (newGroup) => {
+    this.props.dispatch({
+      type: GROUP_CREATE_REQ,
+      group: newGroup,
+    });
+  }
+
+  onGroupDelete = (deleteGroup) => {
+    if (deleteGroup.id === 'theInbox') {
+      return this.setState({ error: 'You cannot delete the Inbox' });
+    }
+    return this.props.dispatch({
+      type: GROUP_DELETE_REQ,
+      group: deleteGroup,
+    });
+  }
+
+  onGroupUpdate = (editGroup) => {
+    this.props.dispatch({
+      type: GROUP_UPDATE_REQ,
+      group: editGroup,
+    });
+    this.setState({
+      editList: { name: '' },
+      ...clearDialogs,
+    });
+  }
+
+  onRedirect = (groupId) => {
+    const path = `/lists/${groupId}`;
+    // change the url
+    this.props.router.push(path);
+    // TODO details
+  }
   render() {
     return (
       <div>
@@ -36,7 +102,7 @@ class BlunderLeftDrawerContent extends Component {
           />
           <ListItem
             primaryText="Folders"
-            onTouchTap={() => this.setState({ showCreateDialog: true })}
+            onTouchTap={() => this.setState({ ...clearDialogs, showCreateDialog: true })}
             leftAvatar={<Avatar icon={<FileFolderSVG />} />}
             rightIcon={<CreateNewFolderSVG />}
           />
@@ -51,6 +117,7 @@ class BlunderLeftDrawerContent extends Component {
               <ModeEditSVG
                 onTouchTap={() => {
                   this.setState({
+                    ...clearDialogs,
                     showEditDialog: true,
                     editList: group,
                   });
@@ -70,7 +137,7 @@ class BlunderLeftDrawerContent extends Component {
             <FlatButton
               label="Cancel"
               primary
-              onTouchTap={() => console.log('cancel dialog')}
+              onTouchTap={() => this.setState({ showCreateDialog: false })}
             />,
             <FlatButton
               label="Create"
@@ -82,7 +149,14 @@ class BlunderLeftDrawerContent extends Component {
         >
           <TextField
             hintText={'Add a list...'}
-            onChange={(e) => { console.log(e.target.value); }}
+            onChange={(e) => {
+              this.setState({
+                editList: {
+                  ...this.state.editList,
+                  name: e.target.value,
+                },
+              });
+            }}
           />
         </Dialog>
         <Dialog
@@ -93,6 +167,7 @@ class BlunderLeftDrawerContent extends Component {
             <FlatButton
               label="Cancel"
               primaryText
+              onTouchTap={() => this.setState({ showDeleteDialog: false })}
             />,
             <FlatButton
               label="Delete a Blunder List"
@@ -114,6 +189,7 @@ class BlunderLeftDrawerContent extends Component {
               primary
               onTouchTap={() => {
                 this.setState({
+                  ...clearDialogs,
                   showDeleteDialog: true,
                 });
               }}
@@ -150,6 +226,9 @@ BlunderLeftDrawerContent.propTypes = {
   groups: PropTypes.arrayOf({
     name: PropTypes.string.isRequired,
   }).isRequired,
+  router: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  location: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = ({ groups }) => ({ groups });
