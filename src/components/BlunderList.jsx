@@ -67,7 +67,7 @@ class BlunderList extends React.Component {
         name: event.target.value,
       },
     });
-    // TODO close item detail
+    this.props.closeItemDetail();
   }
 
   onItemCreate = (addItem) => {
@@ -177,6 +177,7 @@ class BlunderList extends React.Component {
 }
 
 BlunderList.propTypes = {
+  closeItemDetail: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   items: PropTypes.arrayOf({
     name: PropTypes.string.isRequired,

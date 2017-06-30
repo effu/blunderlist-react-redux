@@ -54,7 +54,7 @@ class HomeView extends React.Component {
               openSecondary
             >
               <BlunderRightDrawerContent
-                closeItemDetail={this.closeItemDetail}
+                closeDrawer={this.closeItemDetail}
               />
             </Drawer>
           </div>

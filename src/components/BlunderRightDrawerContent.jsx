@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  // routerShape,
+  routerShape,
   withRouter,
 } from 'react-router';
 import {
@@ -36,6 +36,12 @@ class BlunderRightDrawerContent extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const myItem = nextProps.items.find(item => item.id === nextProps.params.itemId);
+    this.setState({
+      myItem: myItem || defaultItem,
+    });
+  }
   onItemNameChange = (event) => {
     const { myItem } = this.state;
     const { value } = event.target;
@@ -59,8 +65,14 @@ class BlunderRightDrawerContent extends Component {
       type: ITEM_DELETE_REQ,
       item: deleteItem,
     });
-    // TODO close drawer ...
+    this.props.closeDrawer();
+    const path = `/lists/${this.props.params.groupId}`;
+    this.props.router.replace(path);
+    this.setState({ showDialog: false });
   }
+
+  // onItemCheck
+
   render() {
     const {
       myItem,
@@ -119,9 +131,13 @@ class BlunderRightDrawerContent extends Component {
     );
   }
 }
+
 BlunderRightDrawerContent.propTypes = {
   closeDrawer: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
+  params: PropTypes.string.isRequired,
+  router: routerShape.isRequired,
+  items: PropTypes.string.isRequired,
 };
 
 // const mapStateToProps = state => ({ items: state.items });

@@ -90,7 +90,7 @@ class BlunderLeftDrawerContent extends Component {
     const path = `/lists/${groupId}`;
     // change the url
     this.props.router.push(path);
-    // TODO details
+    this.props.closeItemDetail();
   }
   render() {
     return (
@@ -223,6 +223,7 @@ class BlunderLeftDrawerContent extends Component {
 
 BlunderLeftDrawerContent.propTypes = {
   closeDrawer: PropTypes.func.isRequired,
+  closeItemDetail: PropTypes.func.isRequired,
   groups: PropTypes.arrayOf({
     name: PropTypes.string.isRequired,
   }).isRequired,
