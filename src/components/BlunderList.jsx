@@ -47,6 +47,14 @@ class BlunderList extends React.Component {
         items,
         params,
       } = nextProps;
+
+      // let filteredItems;
+      // if (this.props.params.groupId == 'theInbox') {
+      //   filteredItems = items.filter(item => !item.groupId);
+      // } else {
+      //   filteredItems = items.filter(item => item.groupId === item.groupId);
+      // }
+
       const filteredItems = items.filter(item => params.groupId === item.groupId);
       this.setState({ filteredItems: filteredItems || [] });
     }

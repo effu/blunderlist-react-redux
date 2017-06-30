@@ -1,28 +1,28 @@
-/* components/BlunderLeftDrawerContent.jsx */
+
+/* BlunderLeftDrawerContent */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  // routerShape,
-  withRouter,
-} from 'react-router';
-// non default exports in curly braces
-import { List, ListItem } from 'material-ui/List';
+import { withRouter } from 'react-router';
+import MenuSVG from 'material-ui/svg-icons/navigation/menu';
 import Dialog from 'material-ui/Dialog';
+import Avatar from 'material-ui/Avatar';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
-import Avatar from 'material-ui/Avatar';
 import FileFolderSVG from 'material-ui/svg-icons/file/folder';
 import CreateNewFolderSVG from 'material-ui/svg-icons/file/create-new-folder';
-import ModeEditSVG from 'material-ui/svg-icons/content/create';
-import MenuSVG from 'material-ui/svg-icons/navigation/menu';
+import ModeEditSVG from 'material-ui/svg-icons/editor/mode-edit';
 import {
+  List,
+  ListItem,
+} from 'material-ui/List';
+import {
+  GROUP_UPDATE_REQ,
   GROUP_CREATE_REQ,
   GROUP_DELETE_REQ,
-  GROUP_UPDATE_REQ,
 } from '../actions';
-
 
 const clearDialogs = {
   showCreateDialog: false,
@@ -33,9 +33,7 @@ const clearDialogs = {
 class BlunderLeftDrawerContent extends Component {
   state = {
     ...clearDialogs,
-    editList: {
-      name: '',
-    },
+    editList: { name: '' },
   }
 
   componentWillMount() {
@@ -50,7 +48,6 @@ class BlunderLeftDrawerContent extends Component {
     if (this.props.groups.length !== nextProps.groups.length) {
       const newGroup = nextProps.groups[nextProps.groups.length - 1];
       this.onRedirect(newGroup.id);
-      // dialog will not close until the groups change
       this.setState({
         ...clearDialogs,
         editList: { name: '' },
@@ -58,27 +55,33 @@ class BlunderLeftDrawerContent extends Component {
     }
   }
 
-  onGroupCreate = (newGroup) => {
+  onRedirect = (groupId) => {
+    const path = `/lists/${groupId}`;
+    this.props.router.push(path);
+    // TODO close item detail
+  }
+
+  onGroupCreate = (newList) => {
     this.props.dispatch({
       type: GROUP_CREATE_REQ,
-      group: newGroup,
+      group: newList,
     });
   }
 
-  onGroupDelete = (deleteGroup) => {
-    if (deleteGroup.id === 'theInbox') {
+  onGroupDelete = (deleteList) => {
+    if (deleteList.id === 'theInbox') {
       return this.setState({ error: 'You cannot delete the Inbox' });
     }
     return this.props.dispatch({
       type: GROUP_DELETE_REQ,
-      group: deleteGroup,
+      group: deleteList,
     });
   }
 
-  onGroupUpdate = (editGroup) => {
+  onGroupUpdate = (editList) => {
     this.props.dispatch({
       type: GROUP_UPDATE_REQ,
-      group: editGroup,
+      group: editList,
     });
     this.setState({
       editList: { name: '' },
@@ -86,12 +89,6 @@ class BlunderLeftDrawerContent extends Component {
     });
   }
 
-  onRedirect = (groupId) => {
-    const path = `/lists/${groupId}`;
-    // change the url
-    this.props.router.push(path);
-    this.props.closeItemDetail();
-  }
   render() {
     return (
       <div>
@@ -101,15 +98,21 @@ class BlunderLeftDrawerContent extends Component {
             rightIcon={<MenuSVG />}
           />
           <ListItem
-            primaryText="Folders"
-            onTouchTap={() => this.setState({ ...clearDialogs, showCreateDialog: true })}
+            onTouchTap={() => {
+              this.setState({
+                ...clearDialogs,
+                showCreateDialog: true,
+              });
+            }}
             leftAvatar={<Avatar icon={<FileFolderSVG />} />}
             rightIcon={<CreateNewFolderSVG />}
+            primaryText="Folders"
           />
           <Divider />
         </List>
         {this.props.groups.map(group => (
           <ListItem
+            key={group.id}
             onTouchTap={() => this.onRedirect(group.id)}
             leftAvatar={<Avatar icon={<FileFolderSVG />} />}
             primaryText={group.name}
@@ -121,29 +124,27 @@ class BlunderLeftDrawerContent extends Component {
                     showEditDialog: true,
                     editList: group,
                   });
-                }
-              }
+                }}
               />
             }
           />
-          ))
+        ))
         }
-
         <Dialog
-          open={this.state.showCreateDialog}
-          title="Create a new list"
           modal={false}
+          open={this.state.showCreateDialog}
+          title="Create New Blunder List"
           actions={[
             <FlatButton
               label="Cancel"
               primary
-              onTouchTap={() => this.setState({ showCreateDialog: false })}
+              onTouchTap={() => this.setState({ ...clearDialogs })}
             />,
             <FlatButton
               label="Create"
-              keyboardFocused
-              onTouchTap={() => console.log('create a new list')}
               primary
+              keyboardFocused
+              onTouchTap={() => this.onGroupCreate(this.state.editList)}
             />,
           ]}
         >
@@ -167,10 +168,10 @@ class BlunderLeftDrawerContent extends Component {
             <FlatButton
               label="Cancel"
               primaryText
-              onTouchTap={() => this.setState({ showDeleteDialog: false })}
+              onTouchTap={() => this.setState({ ...clearDialogs })}
             />,
             <FlatButton
-              label="Delete a Blunder List"
+              label="Delete Blunder List"
               primary
               keyboardFocused
               onTouchTap={() => this.onGroupDelete(this.state.editList)}
@@ -178,6 +179,7 @@ class BlunderLeftDrawerContent extends Component {
           ]}
         >
           You will not be able to undo this action.
+          <div>{this.state.error}</div>
         </Dialog>
         <Dialog
           modal={false}
@@ -196,9 +198,9 @@ class BlunderLeftDrawerContent extends Component {
             />,
             <FlatButton
               label="Update"
+              primary
               keyboardFocused
               onTouchTap={() => this.onGroupUpdate(this.state.editList)}
-              primary
             />,
           ]}
         >
@@ -219,21 +221,15 @@ class BlunderLeftDrawerContent extends Component {
     );
   }
 }
-// modal={false}
 
 BlunderLeftDrawerContent.propTypes = {
   closeDrawer: PropTypes.func.isRequired,
-  closeItemDetail: PropTypes.func.isRequired,
-  groups: PropTypes.arrayOf({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  router: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   location: PropTypes.string.isRequired,
+  groups: PropTypes.string.isRequired,
+  router: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = ({ groups }) => ({ groups });
 
 export default connect(mapStateToProps)(withRouter(BlunderLeftDrawerContent));
-
-// onTouchTap={() => this.setState({ ...clearDialogs })}
