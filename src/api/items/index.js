@@ -6,6 +6,18 @@ import receiveStatus from '../receiveStatus';
 const DOMAIN = 'http://localhost:3001';
 
 export default class itemsApi {
+  static getAllItemsPromise() {
+    return fetch(`${DOMAIN}/items`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(res => receiveStatus(res))
+      .then(res => res.json())
+    .catch(err => receiveStatus(err));
+  }
+
   static createItemPromise(item) {
     return fetch(`${DOMAIN}/items`, {
       method: 'POST',

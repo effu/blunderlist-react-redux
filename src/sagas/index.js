@@ -4,11 +4,13 @@ import { takeLatest } from 'redux-saga';
 import { fork } from 'redux-saga/effects';
 import { createItem, updateItem, deleteItem } from './items';
 import { createGroup, updateGroup, deleteGroup } from './groups';
+import getTheAppStarted from './getTheAppStarted';
 import { loginUser } from './users';
 import * as actions from '../actions';
 
 export default function* sagas() {
   yield [
+    fork(takeLatest, actions.INITIALIZE_APP, getTheAppStarted),
     fork(takeLatest, actions.ITEM_CREATE_REQ, createItem),
     fork(takeLatest, actions.ITEM_DELETE_REQ, deleteItem),
     fork(takeLatest, actions.ITEM_UPDATE_REQ, updateItem),

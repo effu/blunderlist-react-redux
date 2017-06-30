@@ -1,4 +1,6 @@
-/* components/BlunderRightDrawerContent.jsx */
+
+/* BlunderRightDrawerContent.jsx */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -10,30 +12,26 @@ import {
   List,
   ListItem,
 } from 'material-ui/List';
-import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
-import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
 import MenuSVG from 'material-ui/svg-icons/navigation/menu';
-import {
-  ITEM_UPDATE_REQ,
-  ITEM_DELETE_REQ,
-} from '../actions';
 
+import {
+  ITEM_DELETE_REQ,
+  ITEM_UPDATE_REQ,
+} from '../actions';
 
 const defaultItem = {
   id: 'blunder',
-  name: 'I forgot to pass out the roll.',
-  completed: false,
+  name: 'I tripped on my shoelace.',
 };
 
 class BlunderRightDrawerContent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showDialog: false,
-      myItem: defaultItem,
-    };
+  state = {
+    showDialog: false,
+    myItem: defaultItem,
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,9 +40,10 @@ class BlunderRightDrawerContent extends Component {
       myItem: myItem || defaultItem,
     });
   }
-  onItemNameChange = (event) => {
+
+  onItemNameChange = (e) => {
     const { myItem } = this.state;
-    const { value } = event.target;
+    const { value } = e.target;
     this.setState({
       myItem: {
         ...myItem,
@@ -71,8 +70,6 @@ class BlunderRightDrawerContent extends Component {
     this.setState({ showDialog: false });
   }
 
-  // onItemCheck
-
   render() {
     const {
       myItem,
@@ -90,16 +87,18 @@ class BlunderRightDrawerContent extends Component {
             <Checkbox
               checked={myItem.completed}
               onCheck={() => {
-                console.log('item onCheck !completed');
-              }
-              }
+                this.onItemUpdate({
+                  ...myItem,
+                  completed: !myItem.completed,
+                });
+              }}
             />
             <TextField
               fullWidth
               hintText={'Rename the blunder'}
               value={myItem.name}
               onChange={this.onItemNameChange}
-              onBlur={this.onItemUpdate(myItem)}
+              onBlur={() => this.onItemUpdate(myItem)}
             />
           </ListItem>
           <ListItem
@@ -110,7 +109,7 @@ class BlunderRightDrawerContent extends Component {
         <Dialog
           modal={false}
           open={showDialog}
-          title={`"${myItem.name}" will be deleted forever!`}
+          title={`"${myItem.name}" will be deleted forever.`}
           actions={[
             <FlatButton
               label="Cancel"
@@ -125,7 +124,7 @@ class BlunderRightDrawerContent extends Component {
             />,
           ]}
         >
-          You Will not be able to undo this action!
+         You will not be able to undo this action.
         </Dialog>
       </div>
     );
@@ -135,12 +134,11 @@ class BlunderRightDrawerContent extends Component {
 BlunderRightDrawerContent.propTypes = {
   closeDrawer: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
+  items: PropTypes.string.isRequired,
   params: PropTypes.string.isRequired,
   router: routerShape.isRequired,
-  items: PropTypes.string.isRequired,
 };
 
-// const mapStateToProps = state => ({ items: state.items });
 const mapStateToProps = ({ items }) => ({ items });
 
 export default connect(mapStateToProps)(withRouter(BlunderRightDrawerContent));

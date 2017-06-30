@@ -6,6 +6,18 @@ import receiveStatus from '../receiveStatus';
 const DOMAIN = 'http://localhost:3001';
 
 export default class groupsApi {
+  static getAllGroupsPromise() {
+    return fetch(`${DOMAIN}/groups`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(res => receiveStatus(res))
+      .then(res => res.json())
+    .catch(err => receiveStatus(err));
+  }
+
   static createGroupPromise(group) {
     return fetch(`${DOMAIN}/groups`, {
       method: 'POST',

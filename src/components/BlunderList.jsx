@@ -45,7 +45,7 @@ class BlunderList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if ((this.props.params.groupId !== nextProps.params.groupId) ||
-        (this.props.items.length !== nextProps.items.length)) {
+        !isEqual(this.props.items, nextProps.items)) {
       const {
         items,
         params,
