@@ -1,6 +1,11 @@
 /* components/BlunderRightDrawerContent.jsx */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import {
+  // routerShape,
+  withRouter,
+} from 'react-router';
 import {
   List,
   ListItem,
@@ -10,6 +15,11 @@ import Checkbox from 'material-ui/Checkbox';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import MenuSVG from 'material-ui/svg-icons/navigation/menu';
+import {
+  ITEM_UPDATE_REQ,
+  ITEM_DELETE_REQ,
+} from '../actions';
+
 
 const defaultItem = {
   id: 'blunder',
@@ -26,9 +36,37 @@ class BlunderRightDrawerContent extends Component {
     };
   }
 
-
-  render() {
+  onItemNameChange = (event) => {
     const { myItem } = this.state;
+    const { value } = event.target;
+    this.setState({
+      myItem: {
+        ...myItem,
+        name: value,
+      },
+    });
+  }
+
+  onItemUpdate = (updateItem) => {
+    this.props.dispatch({
+      type: ITEM_UPDATE_REQ,
+      item: updateItem,
+    });
+  }
+
+  onItemDelete = (deleteItem) => {
+    this.props.dispatch({
+      type: ITEM_DELETE_REQ,
+      item: deleteItem,
+    });
+    // TODO close drawer ...
+  }
+  render() {
+    const {
+      myItem,
+      showDialog,
+    } = this.state;
+
     return (
       <div>
         <List>
@@ -39,7 +77,10 @@ class BlunderRightDrawerContent extends Component {
           <ListItem>
             <Checkbox
               checked={myItem.completed}
-              onCheck={() => { console.log('item onCheck !completed'); }}
+              onCheck={() => {
+                console.log('item onCheck !completed');
+              }
+              }
             />
             <TextField
               fullWidth
@@ -50,7 +91,7 @@ class BlunderRightDrawerContent extends Component {
             />
           </ListItem>
           <ListItem
-            primartyText="Remove Blunder"
+            primaryText="Remove Blunder"
             onTouchTap={() => this.setState({ showDialog: true })}
           />
         </List>
@@ -80,6 +121,10 @@ class BlunderRightDrawerContent extends Component {
 }
 BlunderRightDrawerContent.propTypes = {
   closeDrawer: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default BlunderRightDrawerContent;
+// const mapStateToProps = state => ({ items: state.items });
+const mapStateToProps = ({ items }) => ({ items });
+
+export default connect(mapStateToProps)(withRouter(BlunderRightDrawerContent));
